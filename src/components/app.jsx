@@ -17,19 +17,45 @@ class DataGrid extends React.Component {
     this.state = {
       data: props.data,
       types:props.types,
+      countries:props.countries,
       page: props.page,
       displayCount: props.displayCount,
       searchTerm: props.searchTerm,
       sort: props.sort,
+      filterType:props.filterType,
+      filterCountry:props.filterCountry,
       isLoading: true
     };
 
   }
 
   updateSettings(type, value) {
-    var setting = {};
-    setting[type] = value
-   // this.props.onChange(setting);
+    
+    this.setState({
+      filterType:type
+    })
+   
+  }
+
+updateCountry(type,value){
+  this.setState({
+    filterCountry:type
+  })
+ 
+}
+
+   filterByType(data,filter,key) {
+    if (filter === "" || !filter || filter=='All' ) {return data};
+    return (
+      data.filter(function(o) {
+        return (
+          // Object.keys(o).some(function(v, i) {
+          //   return o[v].toLowerCase().includes(filter.toLowerCase());
+          // })
+        o[key]==filter
+        )
+      })
+    );
   }
 
 
@@ -56,9 +82,20 @@ class DataGrid extends React.Component {
       (res) => {
         console.log(res);
         let orgType=res[1].results.map((k)=>k.name);
+        let countries = [...new Set(res[0].results.map((r)=>r.country))];
+        countries.unshift('All');
+        console.log(countries);
+
+        orgType.unshift("All");
+        let dataWithType=res[0].results.map((r)=>{
+            r.organization_type=r.organization_type.indexOf(res[1].results[0].id)!=-1?'Individual':'Group';
+
+            return r;
+        })
         this.setState({
-          data: res[0].results,
+          data: dataWithType,
           types:orgType,
+          countries:countries,
           isLoading: false
         });
       },
@@ -76,8 +113,9 @@ class DataGrid extends React.Component {
 
   render() {
     console.log("rendering");
-
-    var filteredData = SearchBox.filterData(this.state.data, this.state.searchTerm);
+    var filteredByType =this.filterByType(this.state.data,this.state.filterType,'organization_type');
+    var filteredByCountry =this.filterByType(filteredByType,this.state.filterCountry,'country');
+    var filteredData = SearchBox.filterData(filteredByCountry, this.state.searchTerm);
     var sortedData = DataTable.sortData(filteredData, this.state.sort);
     var paginated = Pagination.pageData(sortedData, this.state);
 
@@ -105,17 +143,27 @@ class DataGrid extends React.Component {
           </div>
         </div>
         <div className="row">
-          <div className="col-md-9">
+          <div className="col-md-6">
             
           </div>
           <div className="col-md-3 ">
-          <DropDownMenu value={this.state.types[0]} options={this.state.types} ref="page" onChange={this.updateSettings.bind(this)} />
+          
+    <label  class="control-label"> Filter By Type  </label>
+    
+    <DropDownMenu value={this.state.filterType} options={this.state.types}  onChange={this.updateSettings.bind(this)} />
+    
+
+          
+          </div>
+          <div className="col-md-3 ">
+          <label  class="control-label"> Filter By Country </label>
+          <DropDownMenu value={this.state.filterCountry} options={this.state.countries}  onChange={this.updateCountry.bind(this)} />
           </div>
         </div>
         <div className="dataTable">
           <DataTable
             rows={paginated.paginatedData}
-            cols={[{"name":"Name"},{"city":"City"},{"country":"Country"},{"business_identification_number":"Buiness #"},
+            cols={[{"name":"Name"},{"city":"City"},{"country":"Country"},{"organization_type":"Type"},{"business_identification_number":"Buiness #"},
             {"ggn_number":"GGN #"},{"phone":"Phone"},{"email":"Email"},{"detail":"Detail"}]}
              onChange={this.setState.bind(this)}
             // sort={this.state.sort}
@@ -164,7 +212,9 @@ DataGrid.defaultProps = {
   displayCount: 10,
   page: 1,
   searchTerm: "",
-  sort: {}
+  sort: {},
+  filterType: 'All',
+  filterCountry:'All'
 }
 
 export default DataGrid;

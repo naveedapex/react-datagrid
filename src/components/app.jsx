@@ -212,7 +212,7 @@ DataGrid.defaultProps = {
   displayCount: 10,
   page: 1,
   searchTerm: "",
-  sort: {},
+  sort: {name:'asc'},
   filterType: 'All',
   filterCountry:'All'
 }

@@ -7,7 +7,7 @@ class Pagination extends React.Component{
   }
 
   updateSettings(type, value) {
-    var setting = {};
+    const setting = {};
     setting[type] = value
     this.props.onChange(setting);
   }
@@ -18,7 +18,7 @@ class Pagination extends React.Component{
     }
 
     if (nextProps.paginatedProps.displayCount !== this.props.paginatedProps.displayCount) {
-      var i = 1;
+      let i = 1;
       while(this.props.paginatedProps.itemStart > i * nextProps.paginatedProps.displayCount) { i++; };
       this.props.onChange({'page' : i});
     }
@@ -67,7 +67,7 @@ Pagination.defaultProps = {
 
 class PagedData {
   constructor(d, o) {
-    var r = {paginatedProps:{}, paginatedData:[]};
+    const r = {paginatedProps:{}, paginatedData:[]};
 
     r.paginatedProps.total = d.length;
     r.paginatedProps.itemStart = PagedData.getStart(r.paginatedProps.total, o.page, o.displayCount);
@@ -86,13 +86,13 @@ class PagedData {
     return (t > 0) ? ((p - 1) * d) + 1 : 0;
   }
   static getEnd(c, p, d) {
-    var h = p * d;
+    const h = p * d;
     return (h <= c) ? h : c;
   }
   static getPageOptions(t, d) {
-    var o = new Array(Math.ceil(t / d));
-    var i = 0;
-    var a = o.length;
+    const o = new Array(Math.ceil(t / d));
+    let i = 0;
+    const a = o.length;
     while(i < a){
       o[i] = i+1;
       i++;

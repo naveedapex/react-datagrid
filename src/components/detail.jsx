@@ -1,11 +1,7 @@
 /* eslint-disable import/first */
 import React from 'react';
-
-
-
+import {proxyUrl, targetUrl, employeesUrl} from '../config';
 import Employees from './employees';
-
-
 import { CircleLoader } from 'react-spinners';
 
 
@@ -24,18 +20,13 @@ class DetailPage extends React.Component{
 
 
   componentDidMount() {
-    const proxyUrl = 'https://cryptic-spire-94950.herokuapp.com/';
-    const targetUrl = 'https://agriplacex-organizations.herokuapp.com/api/v1/organizations/';
-    const employeesUrl='https://agriplacex-organizations.herokuapp.com/api/v1/employees/';
+
     const { match: { params } } = this.props;
      const url=proxyUrl + targetUrl+`${params.companyId}`;
 
      let p4 = Promise.all([fetch(url).then(res => res.json()),fetch(proxyUrl+employeesUrl).then(res => res.json())]);
 
-p4.then((value)=> {
-    console.log(Array.isArray(value));  // true
-    console.log(value[0]);              // 42
-    console.log(value[1]); 
+p4.then((value)=> {    
     let org=Object.entries(value[0]).map((k,i)=>{
                 console.log(k)
                 let val=k[1];
@@ -52,7 +43,6 @@ p4.then((value)=> {
                 });
                            
     let emp=value[1].results.filter((k)=>k.organizations[0]==value[0].resource_uri)
-    console.log(emp)
     this.setState({  
         data:org,
         employees:emp,

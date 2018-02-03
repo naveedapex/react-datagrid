@@ -6,12 +6,12 @@ class DataTable extends React.Component{
   }
 
   static sortData(d,s) {
-    var sortCol = Object.keys(s)[0];
+    const sortCol = Object.keys(s)[0];
     if (sortCol) {
 
     }
 
-    var sorted = d.sort(function(a, b){
+    const sorted = d.sort(function(a, b){
       if(a[sortCol] < b[sortCol]) return (s[sortCol] === "asc") ? -1 : 1;
       if(a[sortCol] > b[sortCol]) return (s[sortCol] === "asc") ? 1 : -1;
       return 0;
@@ -22,7 +22,7 @@ class DataTable extends React.Component{
   }
 
   handleClick(key,dir) {
-    var sort = {};
+    const sort = {};
     sort.sort = {};
 
     if (this.props.sort[key] !== dir) {
@@ -34,42 +34,35 @@ class DataTable extends React.Component{
 
   render() {
 
-    var self = this;
+    const self = this;
 
-    var order = this.props.cols.map(function(o) {
-      return Object.keys(o)[0];
-    });
+    const order = this.props.cols.map(o => Object.keys(o)[0]);
 
-    var width = 100/this.props.cols.length
+    const width = 100/this.props.cols.length;
 
-    var dataRows = this.props.rows.map(function (row, key){
-     
-      return(
-        <tr key={key}>
-          {order.map(function(k) {
-            if(k=='detail'){
-              return (
-              <td key={k+"-"+key} width={width+"%"}><a class="btn btn-default" href={row['id']} role="button">Link</a></td>
-             )
-            }else {
-              return (
-                <td key={k+"-"+key} width={width+"%"}>{row[k]}</td>
-              )
-            }
-            
-          })}
-        </tr>
-      )
-    });
+    const dataRows = this.props.rows.map((row, key) => <tr key={key}>
+      {order.map(k => {
+        if(k=='detail'){
+          return (
+          <td key={`${k}-${key}`} width={`${width}%`}><a class="btn btn-default" href={row['id']} role="button">Link</a></td>
+         )
+        }else {
+          return (
+            <td key={`${k}-${key}`} width={`${width}%`}>{row[k]}</td>
+          )
+        }
+        
+      })}
+    </tr>);
 
-    var dataHeaders = order.map(function(k,index) {
+    const dataHeaders = order.map((k, index) => {
 
-      var asc = "glyphicon glyphicon-triangle-top";
-      var des = "glyphicon glyphicon-triangle-bottom";
-      var name=self.props.cols[index][k];
+      const asc = "glyphicon glyphicon-triangle-top";
+      const des = "glyphicon glyphicon-triangle-bottom";
+      const name=self.props.cols[index][k];
       if(name=='Detail'){
         return (
-          <th width={width+"%"} key={k} ref={k}>
+          <th width={`${width}%`} key={k} ref={k}>
           <div className="col-xs-11 row header">{name}</div>
           <div className="col-xs-1 pull-right ">           
           </div>
@@ -78,17 +71,18 @@ class DataTable extends React.Component{
       }
       else {
       return (
-        <th width={width+"%"} key={k} ref={k}>
+        <th width={`${width}%`} key={k} ref={k}>
           <div className="col-xs-11 row header">{self.props.cols[index][k]}</div>
           <div className="col-xs-1 pull-right text-right sorting">
-            <i className={(self.props.sort[k] === "asc") ? asc + " on" : asc + " off"} onClick={self.handleClick.bind(self, k, "asc")} /><br />
-            <i className={(self.props.sort[k] === "des") ? des + " on" : des + " off"} onClick={self.handleClick.bind(self, k, "des")} />
+            <i className={(self.props.sort[k] === "asc") ? `${asc} on` : `${asc} off`} onClick={self.handleClick.bind(self, k, "asc")} /><br />
+            <i className={(self.props.sort[k] === "des") ? `${des} on` : `${des} off`} onClick={self.handleClick.bind(self, k, "des")} />
           </div>
         </th>
       )
     }
     });
 
+  
     return (
       <table className="table table-fixed table-bordered">
         <thead>

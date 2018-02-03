@@ -4,6 +4,7 @@ import SearchBox from './searchbox';
 import DataTable from './datatable';
 import Pagination from './pagination';
 import DropDownMenu from './dropdownmenu';
+import * as API from '../config';
 
 
 import { RingLoader } from 'react-spinners';
@@ -49,24 +50,12 @@ updateCountry(type,value){
     return (
       data.filter(function(o) {
         return (
-          // Object.keys(o).some(function(v, i) {
-          //   return o[v].toLowerCase().includes(filter.toLowerCase());
-          // })
+
         o[key]==filter
         )
       })
     );
   }
-
-
-  // fetch(proxyUrl + targetUrl)
-  // .then(res => res.json())
-  // .then((res) => {
-  //     console.log(res);
-  // //  ReactDOM.render(<DataGrid data={res.results} />, document.getElementById('root'));
-  // ReactDOM.render(<App />, document.getElementById('root'));
-  // });
-
 
 
   componentDidMount() {
@@ -75,17 +64,14 @@ updateCountry(type,value){
     const orgUrl =  'https://agriplacex-organizations.herokuapp.com/api/v1/organization-types/';
 
 
-    let p4 = Promise.all([fetch(proxyUrl + targetUrl).then(res => res.json()),fetch(proxyUrl+orgUrl).then(res => res.json())]);
-    //fetch(proxyUrl + targetUrl)
-      //.then(res => res.json())
+    let p4 = Promise.all([fetch(API.proxyUrl + API.targetUrl).then(res => res.json()),fetch(API.proxyUrl+API.orgUrl).then(res => res.json())]);
+   
       p4.then(
       (res) => {
         console.log(res);
         let orgType=res[1].results.map((k)=>k.name);
         let countries = [...new Set(res[0].results.map((r)=>r.country))];
         countries.unshift('All');
-        console.log(countries);
-
         orgType.unshift("All");
         let dataWithType=res[0].results.map((r)=>{
             r.organization_type=r.organization_type.indexOf(res[1].results[0].id)!=-1?'Individual':'Group';
@@ -99,9 +85,7 @@ updateCountry(type,value){
           isLoading: false
         });
       },
-      // Note: it's important to handle errors here
-      // instead of a catch() block so that we don't swallow
-      // exceptions from actual bugs in components.
+     
       (error) => {
         this.setState({
           error
@@ -113,18 +97,13 @@ updateCountry(type,value){
 
   render() {
     console.log("rendering");
-    var filteredByType =this.filterByType(this.state.data,this.state.filterType,'organization_type');
-    var filteredByCountry =this.filterByType(filteredByType,this.state.filterCountry,'country');
-    var filteredData = SearchBox.filterData(filteredByCountry, this.state.searchTerm);
-    var sortedData = DataTable.sortData(filteredData, this.state.sort);
-    var paginated = Pagination.pageData(sortedData, this.state);
-
-
-   // { this.state.isLoading ? <Loading /> : <Button onClick={() => this.fetchSearchTopStories(searchKey, page + 1)}> More </Button> }
-
+    const filteredByType =this.filterByType(this.state.data,this.state.filterType,'organization_type');
+    const filteredByCountry =this.filterByType(filteredByType,this.state.filterCountry,'country');
+    const filteredData = SearchBox.filterData(filteredByCountry, this.state.searchTerm);
+    const sortedData = DataTable.sortData(filteredData, this.state.sort);
+    const paginated = Pagination.pageData(sortedData, this.state);
     return (
-    <div className="container"> 
- 
+    <div className="container">  
     {this.state.isLoading ? 
     <div class="center-div">
      <RingLoader
@@ -151,9 +130,7 @@ updateCountry(type,value){
     <label  class="control-label"> Filter By Type  </label>
     
     <DropDownMenu value={this.state.filterType} options={this.state.types}  onChange={this.updateSettings.bind(this)} />
-    
-
-          
+             
           </div>
           <div className="col-md-3 ">
           <label  class="control-label"> Filter By Country </label>
@@ -166,7 +143,6 @@ updateCountry(type,value){
             cols={[{"name":"Name"},{"city":"City"},{"country":"Country"},{"organization_type":"Type"},{"business_identification_number":"Buiness #"},
             {"ggn_number":"GGN #"},{"phone":"Phone"},{"email":"Email"},{"detail":"Detail"}]}
              onChange={this.setState.bind(this)}
-            // sort={this.state.sort}
           />
         </div>
           <Pagination
@@ -178,31 +154,6 @@ updateCountry(type,value){
     </div> 
    );
 
-    // return  ( 
-    //   <div>
-    //     <div className="row">
-    //       <div className="col-md-9">
-    //         <h2>My Contacts</h2>
-    //       </div>
-    //       <div className="col-md-3 searchBox">
-    //         <SearchBox onChange={this.setState.bind(this)} searchTerm={this.state.searchTerm} />
-    //       </div>
-    //     </div>
-    //     <div className="dataTable">
-    //       <DataTable
-    //         rows={paginated.paginatedData}
-    //         cols={[{"name":"Last Name"},{"city":"City"},{"business_identification_number":"Buiness #"},
-    //         {"ggn_number":"GGN #"},{"phone":"Phone"},{"email":"Email"},{"detail":"Detail"}]}
-    //         onChange={this.setState.bind(this)}
-    //         sort={this.state.sort}
-    //       />
-    //     </div>
-    //       <Pagination
-    //         paginatedProps={paginated.paginatedProps}
-    //         onChange={this.setState.bind(this)}
-    //       />
-    //   </div>
-    // );
   }
 };
 
@@ -218,4 +169,4 @@ DataGrid.defaultProps = {
 }
 
 export default DataGrid;
-//React.render(<DataGrid data={Data} />, document.getElementById('dataGrid'));
+

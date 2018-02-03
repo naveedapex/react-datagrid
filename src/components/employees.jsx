@@ -2,6 +2,7 @@
 import React from 'react';
 import DataTable from './datatable';
 import { SyncLoader } from 'react-spinners';
+import {proxyUrl, targetUrl, employeesUrl} from '../config';
 
 
 class Employees extends React.Component{
@@ -20,10 +21,6 @@ class Employees extends React.Component{
 
   componentDidMount() { 
 
-const proxyUrl = 'https://cryptic-spire-94950.herokuapp.com/';
-   const targetUrl = 'https://agriplacex-organizations.herokuapp.com/api/v1/organizations/';
-   const employeesUrl='https://agriplacex-organizations.herokuapp.com/api/v1/employees/';
- 
     Promise.all(this.state.data.map((emp) => {
        const url=proxyUrl + employeesUrl+`${emp.id}`;
        return fetch(url).then((response) => {
